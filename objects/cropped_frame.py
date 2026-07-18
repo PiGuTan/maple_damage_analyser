@@ -3,6 +3,8 @@ import objects.custom_exceptions
 import cv2
 import numpy as np
 
+
+
 reader = easyocr.Reader(['en'])
 
 class CroppedFrame:
@@ -51,6 +53,7 @@ class CroppedFrame:
         }
         allowlist = allowlists.get(self.header_name,"0123456789")
         hsv_image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+        # TODO: move values to config
         lower_yellow = np.array([30, 100, 100])
         upper_yellow = np.array([70, 255, 255])
         mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
