@@ -1,5 +1,7 @@
 import easyocr
 import objects.custom_exceptions
+import cv2
+import numpy as np
 
 reader = easyocr.Reader(['en'])
 
@@ -7,6 +9,7 @@ class CroppedFrame:
     def method_mapping(self,method_name):
         method_mapping = {
             "pct": self.read_frame_pct,
+            "ba": self.read_frame_ba,
         }
         if method_name not in method_mapping:
             raise objects.custom_exceptions.UnknownMethod(method_name)
@@ -17,15 +20,15 @@ class CroppedFrame:
         self.method = self.method_mapping(method_name)
         self.header_name = header_name
 
-    def read_frame(self) -> (str,float):
+    def read_frame(self) -> (str,str):
         """
         generic method to read frame
         :return: string and confidence read from easyocr
         """
         return self.method()
 
-    def read_frame_pct(self)-> (str,float):
-        result = reader.readtext(self.frame,
+    def read_frame_pct(self)-> (str,str):
+        results = reader.readtext(self.frame, #TODO: move values to config
                                  allowlist="0123456789.",
                                  mag_ratio=1.5,  # Keeps image enlarged to separate close pixel groups
                                  contrast_ths=1,
@@ -37,9 +40,26 @@ class CroppedFrame:
                                  adjust_contrast=1,  # Boosts contrast to separate white text from the orange gradient
                                  filter_ths = 0.001,
                                  )
-        #for (bbox, text, prob) in result:
-            #return text, prob
-        if not result or len(result) == 0:
+        if not results or len(results) == 0:
             return "", 1
-        highest = max(result, key=lambda x: x[2])
-        return highest[1], highest[2]
+        highest = max(results, key=lambda x: x[2])
+        return highest[1], f"{highest[2]:.3f}"
+    def read_frame_ba(self)-> (str,str):
+        allowlists = {
+            "ctime_ba":"0123456789:",
+            "dmg_ba":"0123456789,kmbtq",
+        }
+        allowlist = allowlists.get(self.header_name,"0123456789")
+        hsv_image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+        lower_yellow = np.array([30, 100, 100])
+        upper_yellow = np.array([70, 255, 255])
+        mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
+
+        results = reader.readtext(mask,allowlist=allowlist)
+
+        if not results or len(results) == 0:
+            return "", 1
+        highest = max(results, key=lambda x: x[2])
+        return highest[1], f"{highest[2]:.3f}"
+
+
