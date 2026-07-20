@@ -11,9 +11,9 @@ class Mask:
 
     method types include: (do update cropped_frame.py when adding method)
     - pct: gets single percentage from image
+    - ctime (grouped in ba): gets ba combat time from image
+    - dmg (grouped in ba): gets ba total damage from image
     not implemented
-    - total-damage: gets total damage from image
-    - combat-time: gets combat time from image
     - unknown name: bind icon?
     - unknown name: buff icon?
     """
@@ -27,3 +27,5 @@ class Mask:
         file_name = file_path.name.split('.',maxsplit=1)[0]
         self.header_name = file_name
         self.method:str = file_name.split('_',maxsplit=1)[1]
+
+masks:list[Mask] = []

@@ -2,7 +2,8 @@ import easyocr
 import objects.custom_exceptions
 import cv2
 import numpy as np
-
+from util import find_similarity_in_big_image
+from .buff import Buff,buffs
 
 
 reader = easyocr.Reader(['en'])
@@ -12,6 +13,7 @@ class CroppedFrame:
         method_mapping = {
             "pct": self.read_frame_pct,
             "ba": self.read_frame_ba,
+            "icon": self.detect_icon,
         }
         if method_name not in method_mapping:
             raise objects.custom_exceptions.UnknownMethod(method_name)
@@ -22,10 +24,11 @@ class CroppedFrame:
         self.method = self.method_mapping(method_name)
         self.header_name = header_name
 
-    def read_frame(self) -> (str,str):
+    def read_frame(self):
         """
-        generic method to read frame
+        generic method to read frame or detect icon(s) in frame
         :return: string and confidence read from easyocr
+        :return: tuple of bools with their associated confidence
         """
         return self.method()
 
@@ -64,5 +67,11 @@ class CroppedFrame:
             return "", 1
         highest = max(results, key=lambda x: x[2])
         return highest[1], f"{highest[2]:.3f}"
+    def detect_icon(self)-> list:
+        csv_sub_writer = []
+        for buff in buffs:
+            index, prob = find_similarity_in_big_image(buff.icon,self.frame, confidence= 0.4)
+            csv_sub_writer.extend((index, prob))
+        return csv_sub_writer
 
 
