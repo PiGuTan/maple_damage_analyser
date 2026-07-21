@@ -8,3 +8,4 @@ class Buff:
         self.buff_name = file_name
 
 buffs:list[Buff] = []
+debuffs:list[Buff] = []

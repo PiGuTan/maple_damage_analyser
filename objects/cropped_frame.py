@@ -1,9 +1,13 @@
+from difflib import Match
+
 import easyocr
+from sympy.strategies.core import switch
+
 import objects.custom_exceptions
 import cv2
 import numpy as np
 from util import find_similarity_in_big_image
-from .buff import Buff,buffs
+from .buff import Buff,buffs,debuffs
 
 
 reader = easyocr.Reader(['en'])
@@ -69,7 +73,14 @@ class CroppedFrame:
         return highest[1], f"{highest[2]:.3f}"
     def detect_icon(self)-> list:
         csv_sub_writer = []
-        for buff in buffs:
+        match self.header_name.split("_",maxsplit=1)[0]: # in case someone want to change the word icon
+            case "buff":
+                active_effects = buffs
+            case "debuff":
+                active_effects = debuffs
+            case _:
+                raise objects.custom_exceptions.UnknownIconType(self.header_name)
+        for buff in active_effects:
             index, prob = find_similarity_in_big_image(buff.icon,self.frame, confidence= 0.4)
             csv_sub_writer.extend((index, prob))
         return csv_sub_writer

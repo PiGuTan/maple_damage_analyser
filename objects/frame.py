@@ -1,6 +1,6 @@
 from .cropped_frame import CroppedFrame
 from .mask import Mask,masks
-from .buff import Buff,buffs
+from .buff import Buff,buffs,debuffs
 from util import save_to_file
 from pathlib import Path
 import argparse
@@ -12,6 +12,7 @@ frame_parser.add_argument('--mask_dir', type=str, default="masks", help="directo
 frame_parser.add_argument("--debug_full", action="store_true", help="saves full extracted frame in --debug_dir")
 frame_parser.add_argument('--debug_dir', default=None, help="if set saves ocr input to directory")
 frame_parser.add_argument('--buff_dir', default="buff_icons", help="buff icon directory storing the details on buffs")
+frame_parser.add_argument('--debuff_dir', default="debuff_icons", help="debuff icon directory storing the details on buffs")
 frame_parser.add_argument('--output', default="result.csv", help="sets output file")
 args, _ = frame_parser.parse_known_args()
 
@@ -46,6 +47,7 @@ class Frame:
 
 directory_path = Path(args.mask_dir)
 buff_path = Path(args.buff_dir)
+debuff_path = Path(args.debuff_dir)
 for file_path in directory_path.iterdir():
     if file_path.is_file():
         try:
@@ -63,6 +65,13 @@ for file_path in directory_path.iterdir():
                     new_buff = Buff(buff_path)
                     buffs.append(new_buff)
                     result_header.extend([f"{new_buff.buff_name}_buff",f"{new_buff.buff_name}_prob"])
+            continue
+        if new_mask.header_name == "debuff_icon":
+            for debuff_path in debuff_path.iterdir():
+                if debuff_path.is_file():
+                    new_debuff = Buff(debuff_path)
+                    debuffs.append(new_debuff)
+                    result_header.extend([f"{new_debuff.buff_name}_debuff",f"{new_debuff.buff_name}_prob"])
             continue
         print(f"unknown file handling method: {new_mask.method} header_name: {new_mask.header_name} for {file_path}")
 
