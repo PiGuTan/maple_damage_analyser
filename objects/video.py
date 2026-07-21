@@ -16,12 +16,15 @@ class Video:
         self.cap = cv2.VideoCapture(path)
 
     @property
+    def fps(self):
+        return self.cap.get(cv2.CAP_PROP_FPS)
+
+    @property
     def frames(self):
         total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        fps = self.cap.get(cv2.CAP_PROP_FPS)
-        interval = round(args.interval * fps)
-        start_frame = round(start_time * fps) if start_time else 0
-        end_frame = min(round((end_time + 1) * fps) if end_time else total_frames, total_frames)
+        interval = round(args.interval * self.fps)
+        start_frame = round(start_time * self.fps) if start_time else 0
+        end_frame = min(round((end_time + 1) * self.fps) if end_time else total_frames, total_frames)
         # +1 used in end_frame to make it inclusive of last frame
         return range(start_frame, end_frame, interval)
 
@@ -29,6 +32,9 @@ class Video:
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
         ret, frame = self.cap.read()
         return frame if ret else None # Returns the numpy.ndarray
+
+    def get_frame_index_with_time_seconds(self, time_seconds:int):
+        return int(time_seconds * self.fps)
 
     def get_frame_time(self, frame_num:int):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
