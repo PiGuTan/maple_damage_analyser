@@ -5,7 +5,7 @@ from util import time_to_seconds
 video_parser = argparse.ArgumentParser(add_help=False)
 video_parser.add_argument('--start_time', type=str, default="0", help="start time of video in seconds, mm:ss or xxmxxs")
 video_parser.add_argument('--end_time', type=str, default="0", help="end time of video in seconds, mm:ss or xxmxxs")
-video_parser.add_argument('--interval', type=float, default=0, help="interval between frames in seconds")
+video_parser.add_argument('--interval', type=float, default=1, help="interval between frames in seconds")
 args, _ = video_parser.parse_known_args()
 
 start_time = time_to_seconds(args.start_time)
