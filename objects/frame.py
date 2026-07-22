@@ -76,7 +76,8 @@ for file_path in directory_path.iterdir():
         print(f"unknown file handling method: {new_mask.method} header_name: {new_mask.header_name} for {file_path}")
 
 
-
-with open(args.output, "w", newline="", encoding="utf-8") as f:
-    header_writer = csv.writer(f)
-    header_writer.writerows([result_header])
+script_path = Path(frame_parser.prog).resolve()
+if script_path.name == "ba_extractor.py":
+    with open(args.output, "w", newline="", encoding="utf-8") as f:
+        header_writer = csv.writer(f)
+        header_writer.writerows([result_header])
