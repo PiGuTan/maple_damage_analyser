@@ -62,7 +62,7 @@ class CroppedFrame:
         mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
         isolated_color_image = cv2.bitwise_and(self.frame, self.frame, mask=mask)
         results = reader.readtext(isolated_color_image,allowlist=allowlist)
-
+        results += reader.readtext(mask, allowlist=allowlist)
         if not results or len(results) == 0:
             return "", 1
         highest = max(results, key=lambda x: x[2])
