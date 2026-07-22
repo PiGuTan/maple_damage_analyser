@@ -3,3 +3,4 @@ easyocr
 matplotlib
 pandas
 opencv_jupyter_ui
+tqdm
