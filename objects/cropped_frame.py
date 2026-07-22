@@ -60,8 +60,8 @@ class CroppedFrame:
         lower_yellow = np.array([30, 100, 100])
         upper_yellow = np.array([70, 255, 255])
         mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
-
-        results = reader.readtext(mask,allowlist=allowlist)
+        isolated_color_image = cv2.bitwise_and(self.frame, self.frame, mask=mask)
+        results = reader.readtext(isolated_color_image,allowlist=allowlist)
 
         if not results or len(results) == 0:
             return "", 1
