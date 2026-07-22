@@ -1,8 +1,4 @@
-from difflib import Match
-
 import easyocr
-from sympy.strategies.core import switch
-
 import objects.custom_exceptions
 import cv2
 import numpy as np
@@ -10,7 +6,7 @@ from util import find_similarity_in_big_image
 from .buff import Buff,buffs,debuffs
 
 
-reader = easyocr.Reader(['en'])
+reader = easyocr.Reader(['en'], gpu=True)
 
 class CroppedFrame:
     def method_mapping(self,method_name):
