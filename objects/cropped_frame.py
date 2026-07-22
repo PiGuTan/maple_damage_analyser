@@ -52,7 +52,7 @@ class CroppedFrame:
     def read_frame_ba(self)-> (str,str):
         allowlists = {
             "ctime_ba":"0123456789:",
-            "dmg_ba":"0123456789,kmbtq",
+            "dmg_ba":"0123456789,k", # to implement mbtq
         }
         allowlist = allowlists.get(self.header_name,"0123456789")
         hsv_image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
