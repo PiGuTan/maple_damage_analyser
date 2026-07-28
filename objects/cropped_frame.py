@@ -63,9 +63,10 @@ class CroppedFrame:
         isolated_color_image = cv2.bitwise_and(self.frame, self.frame, mask=mask)
         results = reader.readtext(isolated_color_image,allowlist=allowlist)
         results += reader.readtext(mask, allowlist=allowlist)
-        if not results or len(results) == 0:
+        filtered_results = list(filter(lambda x:x[1].endswith("k"),results))
+        if not filtered_results or len(filtered_results) == 0:
             return "", 1
-        highest = max(results, key=lambda x: x[2])
+        highest = max(filtered_results, key=lambda x: x[2])
         return highest[1], f"{highest[2]:.3f}"
     def detect_icon(self)-> list:
         csv_sub_writer = []
