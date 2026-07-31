@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 import cv2
 from skimage.metrics import structural_similarity as ssim
+from colorthief import ColorThief
 
 def time_to_seconds(time_str: str) -> int:
     """
@@ -62,3 +63,8 @@ Template dimensions (hxw):{template.shape}
     if max_score >= confidence:
         return index, f"{max_score:.3f}"
     return "", f"{max_score:.3f}"
+
+def get_dominant_colour(path):
+    color_thief = ColorThief(path)
+    rgb_color = color_thief.get_color(quality=1)
+    return '#{:02x}{:02x}{:02x}'.format(*rgb_color)
